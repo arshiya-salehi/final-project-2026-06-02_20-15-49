@@ -1,0 +1,15 @@
+{
+    "asset": "d77d9efa5589d4cd68ffd81eca7306bb",
+    "fileName": "019e8b63-5b0a-724b-8c6c-0d5e656c25f5.wav",
+    "prompt": "A single splash sound of something small hitting the water, wet and crisp, short duration",
+    "negativePrompt": "",
+    "model": "elevenlabs-sound-effects-v2",
+    "modelName": "ElevenLabs Sound Effects V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": ""
+}
