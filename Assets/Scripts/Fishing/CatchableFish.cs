@@ -13,10 +13,10 @@ public class CatchableFish : MonoBehaviour
         _collider = GetComponent<Collider>();
     }
 
-    public void Catch(Transform hook)
+    public void Catch(Transform attachPoint)
     {
         if (_fishSwim != null) _fishSwim.enabled = false;
-        
+
         // Disable physics if it has any, but we want it to follow the hook
         if (_rb != null)
         {
@@ -24,18 +24,39 @@ public class CatchableFish : MonoBehaviour
             _rb.useGravity = false;
         }
 
-        transform.SetParent(hook);
-        transform.localPosition = new Vector3(0, -0.2f, 0); // Hang slightly below the hook center
-        transform.localRotation = Quaternion.Euler(90, 0, 0); // Rotate to hang vertically
+        // Parent to the (unscaled) attach point so the fish keeps its own scale.
+        transform.SetParent(attachPoint, true);
+
+        // Head-up natural catch: the fish forward axis (+Z, its nose) points up
+        // toward the hook, body hanging straight down in world space.
+        transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
+
+        // Place the fish so its head/mouth sits right at the attach point with no
+        // visible gap. We hang it down by half its world height (long axis bounds).
+        float halfHeight = GetHalfHeight();
+        transform.position = attachPoint.position - Vector3.up * halfHeight;
 
         // Optionally disable collider so it doesn't interfere with other fish
         if (_collider != null) _collider.enabled = false;
     }
 
+    private float GetHalfHeight()
+    {
+        // Use renderer world bounds so scale is accounted for. The fish's long
+        // (nose-to-tail) axis becomes vertical when hung, so use the largest extent.
+        Renderer r = GetComponentInChildren<Renderer>();
+        if (r != null)
+        {
+            Vector3 e = r.bounds.extents;
+            return Mathf.Max(e.x, e.y, e.z);
+        }
+        return 0.25f;
+    }
+
     public void Store(Transform cup)
     {
-        // Simple storage: just disable or destroy
-        // You could also parent it to the cup or play an effect
+        // Detach from the hook so it no longer follows it, then deposit in the cup.
+        transform.SetParent(null, true);
         gameObject.SetActive(false);
         // Destroy(gameObject); // Or destroy
     }

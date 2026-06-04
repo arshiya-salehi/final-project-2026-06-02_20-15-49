@@ -7,10 +7,18 @@ public class FishingHook : MonoBehaviour
     [Header("Effects")]
     [SerializeField] private GameObject splashPrefab;
 
+    [Header("Attachment")]
+    [Tooltip("Unscaled child the caught fish is attached to (keeps fish at correct scale).")]
+    [SerializeField] private Transform attachPoint;
+
     [Header("Attraction Settings")]
     [SerializeField] private float attractionRadius = 15f;
+
+    [Header("Debug")]
+    [Tooltip("If enabled, force-catches the nearest fish on a timer (testing only).")]
+    [SerializeField] private bool debugAutoCatch = false;
     [SerializeField] private float forceCatchInterval = 10f;
-    
+
     private float _timer;
     private FishSwim _attractedFish;
 
@@ -32,8 +40,8 @@ public class FishingHook : MonoBehaviour
         // Attract the nearest fish
         FindAndAttractNearestFish();
 
-        // Force a catch every 10 seconds for testing
-        if (_timer >= forceCatchInterval)
+        // Force a catch on a timer (testing only)
+        if (debugAutoCatch && _timer >= forceCatchInterval)
         {
             ForceCatch();
             _timer = 0;
@@ -111,7 +119,7 @@ public class FishingHook : MonoBehaviour
         if (fish != null)
         {
             caughtFish = fish;
-            fish.Catch(transform);
+            fish.Catch(attachPoint != null ? attachPoint : transform);
             
             // Trigger splash effect
             if (splashPrefab != null)
