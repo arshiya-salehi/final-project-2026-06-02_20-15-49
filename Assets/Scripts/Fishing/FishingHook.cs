@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FishingHook : MonoBehaviour
 {
@@ -8,19 +9,24 @@ public class FishingHook : MonoBehaviour
     [SerializeField] private GameObject splashPrefab;
 
     [Header("Attachment")]
-    [Tooltip("Unscaled child the caught fish is attached to (keeps fish at correct scale).")]
     [SerializeField] private Transform attachPoint;
 
     [Header("Attraction Settings")]
     [SerializeField] private float attractionRadius = 15f;
 
-    [Header("Debug")]
-    [Tooltip("If enabled, force-catches the nearest fish on a timer (testing only).")]
-    [SerializeField] private bool debugAutoCatch = false;
-    [SerializeField] private float forceCatchInterval = 10f;
+    [Header("Stardew Minigame Mechanics")]
+    public GameObject minigameUI;
+    public GameObject exclamationMark;
+    public AudioSource biteAudio;
+    public InputActionReference hookSetAction;
+    public float biteWindow = 2.0f;
 
     private float _timer;
     private FishSwim _attractedFish;
+    
+    private bool isBiting = false;
+    private float biteTimer = 0f;
+    private CatchableFish pendingFish = null;
 
     private void Update()
     {
@@ -35,17 +41,40 @@ public class FishingHook : MonoBehaviour
             return;
         }
 
-        _timer += Time.deltaTime;
-
-        // Attract the nearest fish
-        FindAndAttractNearestFish();
-
-        // Force a catch on a timer (testing only)
-        if (debugAutoCatch && _timer >= forceCatchInterval)
+        if (isBiting)
         {
-            ForceCatch();
-            _timer = 0;
+            biteTimer -= Time.deltaTime;
+            
+            bool isTriggerPulled = (hookSetAction != null && hookSetAction.action.ReadValue<float>() > 0.5f) || 
+                                   (Keyboard.current != null && Keyboard.current.upArrowKey.isPressed);
+
+            if (isTriggerPulled)
+            {
+                isBiting = false;
+                if (exclamationMark != null) exclamationMark.SetActive(false);
+                
+                if (minigameUI != null)
+                {
+                    Transform playerCam = Camera.main.transform;
+                    Vector3 flatForward = new Vector3(playerCam.forward.x, 0, playerCam.forward.z).normalized;
+                    minigameUI.transform.position = playerCam.position + flatForward * 1.5f;
+                    minigameUI.transform.LookAt(playerCam);
+                    minigameUI.transform.Rotate(0, 180, 0);
+                    minigameUI.SetActive(true);
+                }
+            }
+            else if (biteTimer <= 0)
+            {
+                isBiting = false;
+                pendingFish = null;
+                if (exclamationMark != null) exclamationMark.SetActive(false);
+            }
+            
+            return;
         }
+
+        _timer += Time.deltaTime;
+        FindAndAttractNearestFish();
     }
 
     private void FindAndAttractNearestFish()
@@ -82,55 +111,37 @@ public class FishingHook : MonoBehaviour
         }
     }
 
-    private void ForceCatch()
-    {
-        if (caughtFish != null) return;
-
-        CatchableFish[] allFish = Object.FindObjectsByType<CatchableFish>(FindObjectsSortMode.None);
-        float minDistance = float.MaxValue;
-        CatchableFish nearest = null;
-
-        foreach (var fish in allFish)
-        {
-            if (fish.gameObject.activeInHierarchy)
-            {
-                float dist = Vector3.Distance(transform.position, fish.transform.position);
-                if (dist < minDistance)
-                {
-                    minDistance = dist;
-                    nearest = fish;
-                }
-            }
-        }
-
-        if (nearest != null)
-        {
-            // Move the fish to the hook instantly to trigger the catch
-            nearest.transform.position = transform.position;
-            // The OnTriggerEnter will handle the rest
-        }
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        if (caughtFish != null) return;
+        if (caughtFish != null || isBiting) return;
 
         CatchableFish fish = other.GetComponent<CatchableFish>();
         if (fish != null)
         {
-            caughtFish = fish;
-            fish.Catch(attachPoint != null ? attachPoint : transform);
-            
-            // Trigger splash effect
-            if (splashPrefab != null)
-            {
-                Instantiate(splashPrefab, transform.position, Quaternion.identity);
-            }
+            pendingFish = fish;
+            isBiting = true;
+            biteTimer = biteWindow;
+
+            if (exclamationMark != null) exclamationMark.SetActive(true);
+            if (biteAudio != null) biteAudio.Play();
+            if (splashPrefab != null) Instantiate(splashPrefab, transform.position, Quaternion.identity);
         }
+    }
+
+    public void FinalizeCatch()
+    {
+        if (pendingFish != null)
+        {
+            caughtFish = pendingFish;
+            caughtFish.Catch(attachPoint != null ? attachPoint : transform);
+        }
+        if (minigameUI != null) minigameUI.SetActive(false);
+        pendingFish = null;
     }
 
     public void ReleaseFish()
     {
         caughtFish = null;
+        pendingFish = null;
     }
 }
