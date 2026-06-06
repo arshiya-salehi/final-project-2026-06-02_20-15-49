@@ -1008,6 +1008,17 @@ CapsuleCollider:
   m_Height: 0.5
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &223155896 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3306091727767842901, guid: c924b61e7adaf3548a98f348ca742fd5, type: 3}
+  m_PrefabInstance: {fileID: 248265895}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1001 &248265895
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1136,6 +1147,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7274636388328692136, guid: c924b61e7adaf3548a98f348ca742fd5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 891845788}
+    - targetCorrespondingSourceObject: {fileID: 7274636388328692136, guid: c924b61e7adaf3548a98f348ca742fd5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 891845793}
   m_SourcePrefab: {fileID: 100100000, guid: c924b61e7adaf3548a98f348ca742fd5, type: 3}
 --- !u!1001 &290321229
 PrefabInstance:
@@ -1760,6 +1774,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72e74826db57611459aefd15ce3e4e42, type: 3}
+--- !u!224 &723960019 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7464672029830177771, guid: c924b61e7adaf3548a98f348ca742fd5, type: 3}
+  m_PrefabInstance: {fileID: 248265895}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &815187365
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1936,6 +1955,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48ac8de1c738fcd42b829ee0d475bbab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishingMinigame
+  currentDifficulty: 1
+  catchArea: {fileID: 0}
+  fishIcon: {fileID: 0}
+  progressBar: {fileID: 0}
+  activeHook: {fileID: 0}
+  vrTriggerAction: {fileID: 0}
+  upwardForce: 800
+  gravity: 400
+--- !u!114 &891845793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891845782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48ac8de1c738fcd42b829ee0d475bbab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FishingMinigame
+  currentDifficulty: 1
+  catchArea: {fileID: 723960019}
+  fishIcon: {fileID: 1224508003}
+  progressBar: {fileID: 223155896}
+  activeHook: {fileID: 1966738307}
+  vrTriggerAction: {fileID: 7904272356298805229, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  upwardForce: 800
+  gravity: 400
 --- !u!1001 &973706735
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2516,6 +2563,11 @@ CapsuleCollider:
   m_Height: 0.5
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!224 &1224508003 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3757970827556852102, guid: c924b61e7adaf3548a98f348ca742fd5, type: 3}
+  m_PrefabInstance: {fileID: 248265895}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1259201329
 GameObject:
   m_ObjectHideFlags: 0

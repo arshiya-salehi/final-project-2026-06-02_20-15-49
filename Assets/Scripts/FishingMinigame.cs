@@ -33,7 +33,7 @@ public class FishingMinigame : MonoBehaviour
 
     void Start()
     {
-        if (vrTriggerAction != null) vrTriggerAction.action.Enable();
+        if (vrTriggerAction?.action != null) vrTriggerAction.action.Enable();
         
         RectTransform track = catchArea.parent.GetComponent<RectTransform>();
         float halfTrack = track.rect.height / 2f;
@@ -60,7 +60,7 @@ public class FishingMinigame : MonoBehaviour
     void HandlePlayerInput()
     {
         bool isPressed = false;
-        if (vrTriggerAction != null)
+        if (vrTriggerAction?.action != null)
         {
             isPressed = vrTriggerAction.action.ReadValue<float>() > 0.5f;
         }
@@ -113,7 +113,7 @@ public class FishingMinigame : MonoBehaviour
 
         if (distance < catchAreaHalfHeight)
         {
-            progressBar.value += 0.25f * Time.deltaTime;
+            progressBar.value = Mathf.Clamp01(progressBar.value + 0.25f * Time.deltaTime);
             if (progressBar.value >= 1f)
             {
                 if (activeHook != null) activeHook.FinalizeCatch();
@@ -121,7 +121,7 @@ public class FishingMinigame : MonoBehaviour
         }
         else
         {
-            progressBar.value -= 0.15f * Time.deltaTime;
+            progressBar.value = Mathf.Clamp01(progressBar.value - 0.15f * Time.deltaTime);
             if (progressBar.value <= 0f)
             {
                 if (activeHook != null) { activeHook.ReleaseFish(); gameObject.SetActive(false); }
